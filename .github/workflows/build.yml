@@ -14,10 +14,18 @@ jobs:
     - name: Log in to GitHub Container Registry
       run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
     - name: Build Backend Image
-      run: docker build -t ghcr.io/${{ github.repository_owner | lower }}/sairen-atelier/backend:latest backend/
+      run: |
+        OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
+        docker build -t ghcr.io/$OWNER/sairen-atelier/backend:latest backend/
     - name: Push Backend Image
-      run: docker push ghcr.io/${{ github.repository_owner | lower }}/sairen-atelier/backend:latest
+      run: |
+        OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
+        docker push ghcr.io/$OWNER/sairen-atelier/backend:latest
     - name: Build Frontend Image
-      run: docker build -t ghcr.io/${{ github.repository_owner | lower }}/sairen-atelier/frontend:latest frontend/
+      run: |
+        OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
+        docker build -t ghcr.io/$OWNER/sairen-atelier/frontend:latest frontend/
     - name: Push Frontend Image
-      run: docker push ghcr.io/${{ github.repository_owner | lower }}/sairen-atelier/frontend:latest
+      run: |
+        OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
+        docker push ghcr.io/$OWNER/sairen-atelier/frontend:latest
