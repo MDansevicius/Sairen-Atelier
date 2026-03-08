@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-init
+  namespace: eshop-prod
+data:
+  init.sql: |
+    CREATE TABLE IF NOT EXISTS products (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(255) NOT NULL,
+      price DECIMAL(10, 2) NOT NULL,
+      description TEXT
+    );
+    INSERT INTO products (name, price, description) VALUES ('Sample Product', 10.99, 'A sample product') ON CONFLICT DO NOTHING;
