@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: eshop-frontend
+  namespace: eshop-dev
+  annotations:
+    kubernetes.io/ingress.class: traefik
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  rules:
+    - host: dev.sairen-atelier.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: eshop-frontend
+                port:
+                  number: 3000
+  tls:
+    - hosts:
+        - dev.sairen-atelier.com
+      secretName: wildcard-sairen-atelier-com-tls
