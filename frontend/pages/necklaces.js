@@ -1,11 +1,14 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useMemo, useState } from 'react';
 import styles from '../styles/Home.module.css';
 import { necklaces } from '../data/products';
 import { useCart } from '../context/CartContext';
+import { getTranslations, withVars } from '../lib/i18n';
+import { localizeProducts } from '../lib/productLocalization';
 
-function ProductCard({ product, index, onAdd }) {
+function ProductCard({ product, index, onAdd, addLabel }) {
   return (
     <article className={styles.productCard} style={{ animationDelay: `${index * 90}ms` }}>
       <Link href={`/products/${product.slug}`} className={styles.productImageLink}>
@@ -18,7 +21,7 @@ function ProductCard({ product, index, onAdd }) {
         <p>{product.material}</p>
         <div className={styles.productMeta}>
           <strong>{product.priceLabel}</strong>
-          <button type="button" onClick={() => onAdd(product)}>Add to Bag</button>
+          <button type="button" onClick={() => onAdd(product)}>{addLabel}</button>
         </div>
       </div>
     </article>
@@ -26,23 +29,29 @@ function ProductCard({ product, index, onAdd }) {
 }
 
 export default function NecklacesPage() {
+  const { locale } = useRouter();
+  const t = getTranslations(locale || 'lt');
+  const localizedNecklaces = useMemo(
+    () => localizeProducts(necklaces, locale || 'lt'),
+    [locale]
+  );
   const maxCatalogPrice = useMemo(
-    () => Math.max(...necklaces.map((product) => Math.round(product.priceCents / 100))),
-    []
+    () => Math.max(...localizedNecklaces.map((product) => Math.round(product.priceCents / 100))),
+    [localizedNecklaces]
   );
   const [searchTerm, setSearchTerm] = useState('');
   const [materialFilter, setMaterialFilter] = useState('all');
   const [maxPriceFilter, setMaxPriceFilter] = useState(maxCatalogPrice);
 
   const materialOptions = useMemo(
-    () => ['all', ...new Set(necklaces.map((product) => product.material))],
-    []
+    () => ['all', ...new Set(localizedNecklaces.map((product) => product.material))],
+    [localizedNecklaces]
   );
 
   const filteredProducts = useMemo(() => {
     const normalizedSearch = searchTerm.trim().toLowerCase();
 
-    return necklaces.filter((product) => {
+    return localizedNecklaces.filter((product) => {
       const matchesPrice = product.priceCents <= maxPriceFilter * 100;
       const matchesMaterial = materialFilter === 'all' || product.material === materialFilter;
       const matchesSearch =
@@ -52,7 +61,7 @@ export default function NecklacesPage() {
 
       return matchesPrice && matchesMaterial && matchesSearch;
     });
-  }, [materialFilter, maxPriceFilter, searchTerm]);
+  }, [localizedNecklaces, materialFilter, maxPriceFilter, searchTerm]);
 
   const {
     cart,
@@ -79,18 +88,18 @@ export default function NecklacesPage() {
   return (
     <>
       <Head>
-        <title>Necklaces | SAIREN Jewelry</title>
-        <meta name="description" content="Explore SAIREN necklaces with search and filter options." />
+        <title>{t.metaNecklacesTitle}</title>
+        <meta name="description" content={t.metaNecklacesDescription} />
       </Head>
 
       <main className={styles.page}>
         <header className={styles.brandHeader}>
-          <Link className={styles.brandMark} href="/" aria-label="SAIREN home">
+          <Link className={styles.brandMark} href="/" aria-label={t.brandHomeAria}>
             SAIREN
           </Link>
           <button className={styles.cartButton} type="button" onClick={() => setCartOpen(true)}>
             <span className={styles.cartIcon} aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="img" aria-label="Shopping bag icon">
+              <svg viewBox="0 0 24 24" role="img" aria-label={t.shoppingBagIconAria}>
                 <path d="M7 8V7a5 5 0 0110 0v1h2a1 1 0 011 1l-1 10a2 2 0 01-2 2H7a2 2 0 01-2-2L4 9a1 1 0 011-1h2zm2 0h6V7a3 3 0 00-6 0v1zm-2.98 2l.87 8.72a.5.5 0 00.5.48h9.22a.5.5 0 00.5-.48L18 10H6.02z" />
               </svg>
             </span>
@@ -99,16 +108,16 @@ export default function NecklacesPage() {
         </header>
 
         {cartOpen ? (
-          <aside className={styles.cartDrawer} aria-label="Shopping cart">
+          <aside className={styles.cartDrawer} aria-label={t.shoppingCartAria}>
             <div className={styles.cartHeader}>
-              <h2>Your Bag</h2>
+              <h2>{t.yourBag}</h2>
               <button type="button" onClick={() => setCartOpen(false)}>
-                Close
+                {t.close}
               </button>
             </div>
 
             {cart.length === 0 ? (
-              <p className={styles.cartEmpty}>Your bag is empty. Add bracelets or necklaces.</p>
+              <p className={styles.cartEmpty}>{t.bagEmpty}</p>
             ) : (
               <>
                 <ul className={styles.cartList}>
@@ -123,7 +132,7 @@ export default function NecklacesPage() {
                             type="button"
                             className={styles.qtyBtn}
                             onClick={() => decrementQuantity(item.itemKey)}
-                            aria-label={`Decrease ${item.name} quantity`}
+                            aria-label={withVars(t.decreaseQuantity, { name: item.name })}
                           >
                             -
                           </button>
@@ -132,7 +141,7 @@ export default function NecklacesPage() {
                             type="button"
                             className={styles.qtyBtn}
                             onClick={() => incrementQuantity(item.itemKey)}
-                            aria-label={`Increase ${item.name} quantity`}
+                            aria-label={withVars(t.increaseQuantity, { name: item.name })}
                           >
                             +
                           </button>
@@ -143,39 +152,39 @@ export default function NecklacesPage() {
                         type="button"
                         onClick={() => removeFromCart(item.itemKey)}
                       >
-                        Remove
+                        {t.remove}
                       </button>
                     </li>
                   ))}
                 </ul>
                 {lastRemovedItem ? (
                   <div className={styles.undoBanner}>
-                    <span>Removed {lastRemovedItem.name}.</span>
+                    <span>{withVars(t.removedItem, { name: lastRemovedItem.name })}</span>
                     <button type="button" onClick={undoRemoveFromCart}>
-                      Undo
+                      {t.undo}
                     </button>
                   </div>
                 ) : null}
                 <div className={styles.cartFooter}>
                   <div className={styles.cartRow}>
-                    <span>Subtotal</span>
+                    <span>{t.subtotal}</span>
                     <strong>{subtotalLabel}</strong>
                   </div>
                   <div className={styles.cartRow}>
-                    <span>Shipping</span>
+                    <span>{t.shipping}</span>
                     <strong>{shippingLabel}</strong>
                   </div>
                   <p className={styles.shippingHint}>{shippingHint}</p>
                   <div className={styles.cartRowTotal}>
-                    <span>Total</span>
+                    <span>{t.total}</span>
                     <strong>{cartTotalLabel}</strong>
                   </div>
                   <button type="button" onClick={startCheckout} disabled={checkoutLoading}>
                     {checkoutState === 'creating'
-                      ? 'Creating session...'
+                      ? t.creatingSessionShort
                       : checkoutState === 'redirecting'
-                        ? 'Redirecting...'
-                        : 'Checkout'}
+                        ? t.redirectingShort
+                        : t.checkout}
                   </button>
                   {checkoutStatusText ? (
                     <span className={styles.checkoutStatus}>{checkoutStatusText}</span>
@@ -189,18 +198,18 @@ export default function NecklacesPage() {
 
         <section className={styles.collectionSection}>
           <header className={styles.collectionHeader}>
-            <span>Collection</span>
-            <h2>Necklaces</h2>
+            <span>{t.collectionLabel}</span>
+            <h2>{t.necklaces}</h2>
           </header>
 
-          <section className={styles.filterBar} aria-label="Necklaces filters">
+          <section className={styles.filterBar} aria-label={t.filtersAriaNecklaces}>
             <div className={styles.filterPrice}>
-              <label htmlFor="necklaces-search">Search</label>
+              <label htmlFor="necklaces-search">{t.search}</label>
               <div className={styles.filterPriceRow}>
                 <input
                   id="necklaces-search"
                   type="text"
-                  placeholder="Search by name or material"
+                  placeholder={t.searchByNameOrMaterial}
                   className={styles.filterTextInput}
                   value={searchTerm}
                   onChange={(event) => setSearchTerm(event.target.value)}
@@ -209,7 +218,7 @@ export default function NecklacesPage() {
             </div>
 
             <div className={styles.filterType}>
-              <span>Material</span>
+              <span>{t.material}</span>
               <div>
                 {materialOptions.map((option) => (
                   <button
@@ -218,14 +227,14 @@ export default function NecklacesPage() {
                     className={materialFilter === option ? styles.filterChipActive : styles.filterChip}
                     onClick={() => setMaterialFilter(option)}
                   >
-                    {option === 'all' ? 'All' : option}
+                    {option === 'all' ? t.all : option}
                   </button>
                 ))}
               </div>
             </div>
 
             <div className={styles.filterPrice}>
-              <label htmlFor="necklaces-price-filter">Price up to</label>
+              <label htmlFor="necklaces-price-filter">{t.priceUpTo}</label>
               <div className={styles.filterPriceRow}>
                 <input
                   id="necklaces-price-filter"
@@ -249,19 +258,25 @@ export default function NecklacesPage() {
                 setMaxPriceFilter(maxCatalogPrice);
               }}
             >
-              Clear filters
+              {t.clearFilters}
             </button>
           </section>
 
           {filteredProducts.length === 0 ? (
             <section className={styles.emptyResult}>
-              <h3>No necklaces match your filters.</h3>
-              <p>Try broadening material or increasing max price.</p>
+              <h3>{t.noNecklacesMatch}</h3>
+              <p>{t.broadenFiltersHint}</p>
             </section>
           ) : (
             <div className={styles.productGrid}>
               {filteredProducts.map((product, index) => (
-                <ProductCard key={product.name} product={product} index={index} onAdd={addToCart} />
+                <ProductCard
+                  key={product.name}
+                  product={product}
+                  index={index}
+                  onAdd={addToCart}
+                  addLabel={t.addToBag}
+                />
               ))}
             </div>
           )}
