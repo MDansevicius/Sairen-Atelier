@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: ghcr.io/mdansevicius/sairen-atelier/backend:dev
+        image: ghcr.io/mdansevicius/sairen-atelier/backend:dev-1d4af4657eb4
         imagePullPolicy: Always
         ports:
         - containerPort: 3001
