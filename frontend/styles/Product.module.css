@@ -1,0 +1,267 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;700&display=swap');
+
+/* ── Page shell ─────────────────────────────────────────── */
+.page {
+  --bg: #f6f1f1;
+  --bg-soft: #f2e8ea;
+  --ink: #3a2f33;
+  --ink-soft: #77646a;
+  --accent: #c88996;
+  --accent-deep: #b5707f;
+  --card: rgba(255, 255, 255, 0.8);
+  min-height: 100vh;
+  background:
+    radial-gradient(1200px 500px at -10% 0%, #f0e1e4 0%, transparent 60%),
+    radial-gradient(700px 320px at 100% 20%, #efdee3 0%, transparent 62%),
+    var(--bg);
+  color: var(--ink);
+  padding: 1.2rem 1.25rem 4rem;
+  font-family: 'Manrope', 'Segoe UI', sans-serif;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+.header {
+  max-width: 1200px;
+  margin: 0 auto 2.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition: color 180ms ease;
+}
+
+.backLink:hover {
+  color: var(--accent-deep);
+}
+
+.brandMark {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.6rem, 4vw, 2.6rem);
+  letter-spacing: 0.16em;
+  color: var(--accent-deep);
+  text-decoration: none;
+}
+
+/* ── Two-column product layout ───────────────────────────── */
+.productLayout {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3.5rem;
+  align-items: start;
+}
+
+/* ── Gallery ─────────────────────────────────────────────── */
+.gallery {
+  position: sticky;
+  top: 1.5rem;
+}
+
+.mainImage {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  border-radius: 14px;
+  display: block;
+  background: var(--bg-soft);
+  transition: opacity 200ms ease;
+}
+
+.thumbnails {
+  display: flex;
+  gap: 0.7rem;
+  margin-top: 0.85rem;
+}
+
+.thumb {
+  width: 0;
+  flex: 1;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 160ms ease, opacity 160ms ease;
+  opacity: 0.7;
+}
+
+.thumb:hover,
+.thumbActive {
+  opacity: 1;
+  border-color: var(--accent);
+}
+
+/* ── Product details ─────────────────────────────────────── */
+.details {
+  padding-top: 0.4rem;
+}
+
+.breadcrumb {
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 0.7rem;
+}
+
+.breadcrumb a {
+  color: var(--ink-soft);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  color: var(--accent-deep);
+}
+
+.productName {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--ink);
+  margin: 0 0 0.4rem;
+}
+
+.materialBadge {
+  display: inline-block;
+  font-size: 0.77rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  background: rgba(181, 112, 127, 0.12);
+  color: var(--accent-deep);
+  border-radius: 999px;
+  padding: 0.28rem 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.price {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 1.4rem;
+}
+
+.description {
+  font-size: 0.93rem;
+  line-height: 1.75;
+  color: var(--ink-soft);
+  margin-bottom: 2rem;
+}
+
+/* ── Add to Bag ─────────────────────────────────────────── */
+.addBtn {
+  width: 100%;
+  border: none;
+  border-radius: 999px;
+  padding: 0.9rem 1.4rem;
+  background: linear-gradient(110deg, #cd929f, #b77281);
+  color: #fff8fa;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: transform 220ms ease, box-shadow 220ms ease;
+  margin-bottom: 2.5rem;
+}
+
+.addBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(181, 112, 127, 0.35);
+}
+
+/* ── Specs table ─────────────────────────────────────────── */
+.specsTitle {
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 0.7rem;
+}
+
+.specs {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.specs tr {
+  border-bottom: 1px solid rgba(181, 112, 127, 0.14);
+}
+
+.specs tr:last-child {
+  border-bottom: none;
+}
+
+.specs td {
+  padding: 0.62rem 0;
+}
+
+.specs td:first-child {
+  color: var(--ink-soft);
+  width: 42%;
+  font-size: 0.82rem;
+  letter-spacing: 0.03em;
+}
+
+.specs td:last-child {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+/* ── Cart button (reused from Home) ─────────────────────── */
+.cartButton {
+  border: 1px solid rgba(181, 112, 127, 0.4);
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 999px;
+  padding: 0.5rem 0.8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  transition: background 180ms ease;
+}
+
+.cartButton:hover {
+  background: rgba(255, 255, 255, 1);
+}
+
+.cartIcon svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: #8f5864;
+  display: block;
+}
+
+.cartCount {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent-deep);
+  min-width: 1ch;
+}
+
+/* ── Responsive ─────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .page {
+    padding: 0.9rem 0.9rem 2.4rem;
+  }
+
+  .productLayout {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .gallery {
+    position: static;
+  }
+}

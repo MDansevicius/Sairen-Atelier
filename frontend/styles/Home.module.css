@@ -402,6 +402,24 @@
   transform: scale(1.05);
 }
 
+.productImageLink {
+  display: block;
+  overflow: hidden;
+}
+
+.productImageLink:hover .productImage {
+  transform: scale(1.04);
+}
+
+.productNameLink {
+  text-decoration: none;
+  color: inherit;
+}
+
+.productNameLink:hover h3 {
+  color: var(--accent-deep);
+}
+
 @keyframes riseIn {
   from {
     opacity: 0;
@@ -460,4 +478,74 @@
   .productImage {
     height: 250px;
   }
+
+  .siteFooter {
+    flex-direction: column;
+    gap: 0.9rem;
+    text-align: center;
+  }
+
+  .footerSocials {
+    justify-content: center;
+  }
+}
+
+/* ── Footer ─────────────────────────────────────────────── */
+.siteFooter {
+  max-width: 1200px;
+  margin: 3.5rem auto 0;
+  padding: 1.8rem 0 0.4rem;
+  border-top: 1px solid rgba(181, 112, 127, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.footerBrand {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 0.95rem;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+}
+
+.footerEmail {
+  font-size: 0.88rem;
+  color: var(--accent-deep);
+  text-decoration: none;
+  letter-spacing: 0.03em;
+  transition: opacity 200ms ease;
+}
+
+.footerEmail:hover {
+  opacity: 0.7;
+}
+
+.footerSocials {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  color: var(--accent-deep);
+  transition: opacity 200ms ease, transform 180ms ease;
+}
+
+.socialLink:hover {
+  opacity: 0.7;
+  transform: translateY(-2px);
+}
+
+.socialLink svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: currentColor;
 }
