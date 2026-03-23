@@ -20,16 +20,26 @@ export async function getStaticProps({ params }) {
 
 export default function ProductPage({ product }) {
   const [activeImage, setActiveImage] = useState(0);
+
   const {
     cart,
     cartOpen,
     setCartOpen,
     cartCount,
+    subtotalLabel,
+    shippingLabel,
+    shippingHint,
     cartTotalLabel,
+    checkoutState,
     checkoutLoading,
+    checkoutStatusText,
     checkoutError,
+    lastRemovedItem,
     addToCart,
+    decrementQuantity,
+    incrementQuantity,
     removeFromCart,
+    undoRemoveFromCart,
     startCheckout,
   } = useCart();
 
@@ -79,21 +89,73 @@ export default function ProductPage({ product }) {
               <>
                 <ul className={homeStyles.cartList}>
                   {cart.map((item) => (
-                    <li key={item.name} className={homeStyles.cartItem}>
+                    <li key={item.itemKey} className={homeStyles.cartItem}>
                       <img src={item.image} alt={item.name} />
-                      <div>
+                      <div className={homeStyles.cartItemContent}>
                         <strong>{item.name}</strong>
-                        <p>{item.priceLabel} x {item.quantity}</p>
+                        <p>{item.priceLabel}</p>
+                        <div className={homeStyles.quantityControls}>
+                          <button
+                            type="button"
+                            className={homeStyles.qtyBtn}
+                            onClick={() => decrementQuantity(item.itemKey)}
+                            aria-label={`Decrease ${item.name} quantity`}
+                          >
+                            -
+                          </button>
+                          <span>{item.quantity}</span>
+                          <button
+                            type="button"
+                            className={homeStyles.qtyBtn}
+                            onClick={() => incrementQuantity(item.itemKey)}
+                            aria-label={`Increase ${item.name} quantity`}
+                          >
+                            +
+                          </button>
+                        </div>
                       </div>
-                      <button type="button" onClick={() => removeFromCart(item.name)}>Remove</button>
+                      <button
+                        type="button"
+                        className={homeStyles.removeItemBtn}
+                        onClick={() => removeFromCart(item.itemKey)}
+                      >
+                        Remove
+                      </button>
                     </li>
                   ))}
                 </ul>
+                {lastRemovedItem ? (
+                  <div className={homeStyles.undoBanner}>
+                    <span>Removed {lastRemovedItem.name}.</span>
+                    <button type="button" onClick={undoRemoveFromCart}>
+                      Undo
+                    </button>
+                  </div>
+                ) : null}
                 <div className={homeStyles.cartFooter}>
-                  <p>Total: {cartTotalLabel}</p>
+                  <div className={homeStyles.cartRow}>
+                    <span>Subtotal</span>
+                    <strong>{subtotalLabel}</strong>
+                  </div>
+                  <div className={homeStyles.cartRow}>
+                    <span>Shipping</span>
+                    <strong>{shippingLabel}</strong>
+                  </div>
+                  <p className={homeStyles.shippingHint}>{shippingHint}</p>
+                  <div className={homeStyles.cartRowTotal}>
+                    <span>Total</span>
+                    <strong>{cartTotalLabel}</strong>
+                  </div>
                   <button type="button" onClick={startCheckout} disabled={checkoutLoading}>
-                    {checkoutLoading ? 'Redirecting...' : 'Checkout'}
+                    {checkoutState === 'creating'
+                      ? 'Creating session...'
+                      : checkoutState === 'redirecting'
+                        ? 'Redirecting...'
+                        : 'Checkout'}
                   </button>
+                  {checkoutStatusText ? (
+                    <span className={homeStyles.checkoutStatus}>{checkoutStatusText}</span>
+                  ) : null}
                   {checkoutError ? (
                     <span className={homeStyles.checkoutError}>{checkoutError}</span>
                   ) : null}
@@ -131,7 +193,9 @@ export default function ProductPage({ product }) {
             <p className={styles.breadcrumb}>
               <Link href="/">Home</Link>
               {' / '}
-              <Link href={`/#${product.category.toLowerCase()}`}>{product.category}</Link>
+              <Link href={product.category === 'Bracelets' ? '/bracelets' : '/necklaces'}>
+                {product.category}
+              </Link>
               {' / '}
               {product.name}
             </p>

@@ -24,6 +24,29 @@ export const bracelets = [
       Care: 'Avoid contact with water and perfume',
       Origin: 'Handcrafted in Lithuania',
     },
+    variants: [
+      {
+        sku: 'STR-CUF-S-RG',
+        size: 'S',
+        color: 'Rose Gold',
+        material: '18k Gold-plated Brass',
+        stock: 6,
+      },
+      {
+        sku: 'STR-CUF-M-RG',
+        size: 'M',
+        color: 'Rose Gold',
+        material: '18k Gold-plated Brass',
+        stock: 8,
+      },
+      {
+        sku: 'STR-CUF-L-SL',
+        size: 'L',
+        color: 'Silver',
+        material: 'Rhodium-plated Brass',
+        stock: 4,
+      },
+    ],
   },
   {
     slug: 'velvet-chain-bracelet',
@@ -50,6 +73,29 @@ export const bracelets = [
       Care: 'Polish with a dry cloth; store in pouch',
       Origin: 'Handcrafted in Lithuania',
     },
+    variants: [
+      {
+        sku: 'VEL-CHA-S-SL',
+        size: 'S',
+        color: 'Silver',
+        material: '925 Sterling Silver',
+        stock: 10,
+      },
+      {
+        sku: 'VEL-CHA-M-SL',
+        size: 'M',
+        color: 'Silver',
+        material: '925 Sterling Silver',
+        stock: 12,
+      },
+      {
+        sku: 'VEL-CHA-M-GD',
+        size: 'M',
+        color: 'Gold',
+        material: '18k Gold Vermeil',
+        stock: 5,
+      },
+    ],
   },
   {
     slug: 'northern-charm-stack',
@@ -76,6 +122,176 @@ export const bracelets = [
       Care: 'Remove before swimming; wipe dry after wear',
       Origin: 'Handcrafted in Lithuania',
     },
+    variants: [
+      {
+        sku: 'NOR-STA-S-RQ',
+        size: 'S',
+        color: 'Rose',
+        material: '14k Rose Gold Finish',
+        stock: 3,
+      },
+      {
+        sku: 'NOR-STA-M-RQ',
+        size: 'M',
+        color: 'Rose',
+        material: '14k Rose Gold Finish',
+        stock: 5,
+      },
+      {
+        sku: 'NOR-STA-L-SQ',
+        size: 'L',
+        color: 'Champagne',
+        material: '14k Rose Gold Finish',
+        stock: 2,
+      },
+    ],
+  },
+  {
+    slug: 'luna-braid-bangle',
+    name: 'Luna Braid Bangle',
+    category: 'Bracelets',
+    priceLabel: 'EUR 99',
+    priceCents: 9900,
+    material: 'Gold vermeil',
+    description:
+      'A braided bangle silhouette with a soft polished finish designed for everyday layering. The Luna Braid Bangle catches light gently and pairs beautifully with chain bracelets or worn solo for a minimal look.',
+    image:
+      'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?auto=format&fit=crop&w=900&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1611085583191-a3b181a88401?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1635767798638-3e25273a8236?auto=format&fit=crop&w=900&q=80',
+    ],
+    specs: {
+      Material: 'Gold vermeil over sterling silver',
+      Finish: 'Polished braided texture',
+      Width: '6 mm',
+      Diameter: '60 mm',
+      Weight: '11 g',
+      Care: 'Store dry and avoid perfume contact',
+      Origin: 'Handcrafted in Lithuania',
+    },
+    variants: [
+      {
+        sku: 'LUN-BAN-S-GD',
+        size: 'S',
+        color: 'Gold',
+        material: 'Gold Vermeil',
+        stock: 8,
+      },
+      {
+        sku: 'LUN-BAN-M-GD',
+        size: 'M',
+        color: 'Gold',
+        material: 'Gold Vermeil',
+        stock: 9,
+      },
+      {
+        sku: 'LUN-BAN-M-SL',
+        size: 'M',
+        color: 'Silver',
+        material: 'Sterling Silver',
+        stock: 5,
+      },
+    ],
+  },
+  {
+    slug: 'opal-link-bracelet',
+    name: 'Opal Link Bracelet',
+    category: 'Bracelets',
+    priceLabel: 'EUR 139',
+    priceCents: 13900,
+    material: 'Sterling silver and opal',
+    description:
+      'A refined link bracelet centered with a subtle opal accent for soft iridescence. Designed to sit comfortably and move naturally with the wrist, it offers a modern jewelry look with delicate detail.',
+    image:
+      'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=900&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=900&q=80',
+    ],
+    specs: {
+      Material: '925 sterling silver with opal accent',
+      Length: '17 cm + 3 cm extension',
+      'Link width': '5 mm',
+      Stone: 'Lab opal, 5 mm',
+      Clasp: 'Lobster clasp',
+      Care: 'Wipe after wear with soft cloth',
+      Origin: 'Handcrafted in Lithuania',
+    },
+    variants: [
+      {
+        sku: 'OPA-LIN-S-SL',
+        size: 'S',
+        color: 'Silver',
+        material: 'Sterling Silver',
+        stock: 6,
+      },
+      {
+        sku: 'OPA-LIN-M-SL',
+        size: 'M',
+        color: 'Silver',
+        material: 'Sterling Silver',
+        stock: 7,
+      },
+      {
+        sku: 'OPA-LIN-M-RG',
+        size: 'M',
+        color: 'Rose Gold',
+        material: 'Rose Gold Vermeil',
+        stock: 4,
+      },
+    ],
+  },
+  {
+    slug: 'eclipse-chain-cuff',
+    name: 'Eclipse Chain Cuff',
+    category: 'Bracelets',
+    priceLabel: 'EUR 169',
+    priceCents: 16900,
+    material: 'Gold-plated silver',
+    description:
+      'A sculpted cuff connected with a slim chain detail for a signature SAIREN silhouette. The Eclipse Chain Cuff blends statement geometry with easy wear, making it ideal for both occasion and everyday styling.',
+    image:
+      'https://images.unsplash.com/photo-1635767798638-3e25273a8236?auto=format&fit=crop&w=900&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1635767798638-3e25273a8236?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1611085583191-a3b181a88401?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1602173574767-37ac01994b2a?auto=format&fit=crop&w=900&q=80',
+    ],
+    specs: {
+      Material: 'Gold-plated sterling silver',
+      Width: '9 mm',
+      'Chain detail': '32 mm drop chain',
+      Diameter: '58 mm',
+      Weight: '16 g',
+      Care: 'Avoid water, lotions, and chemicals',
+      Origin: 'Handcrafted in Lithuania',
+    },
+    variants: [
+      {
+        sku: 'ECL-CUF-S-GD',
+        size: 'S',
+        color: 'Gold',
+        material: 'Gold-plated Silver',
+        stock: 4,
+      },
+      {
+        sku: 'ECL-CUF-M-GD',
+        size: 'M',
+        color: 'Gold',
+        material: 'Gold-plated Silver',
+        stock: 6,
+      },
+      {
+        sku: 'ECL-CUF-L-SL',
+        size: 'L',
+        color: 'Silver',
+        material: 'Sterling Silver',
+        stock: 3,
+      },
+    ],
   },
 ];
 
@@ -105,6 +321,29 @@ export const necklaces = [
       Care: 'Avoid prolonged sun exposure; wipe clean with soft cloth',
       Origin: 'Handcrafted in Lithuania',
     },
+    variants: [
+      {
+        sku: 'MOO-PEN-40-SL',
+        size: '40 cm',
+        color: 'Silver',
+        material: 'Silver + Moonstone',
+        stock: 7,
+      },
+      {
+        sku: 'MOO-PEN-45-SL',
+        size: '45 cm',
+        color: 'Silver',
+        material: 'Silver + Moonstone',
+        stock: 5,
+      },
+      {
+        sku: 'MOO-PEN-45-GD',
+        size: '45 cm',
+        color: 'Gold',
+        material: 'Gold Vermeil + Moonstone',
+        stock: 3,
+      },
+    ],
   },
   {
     slug: 'aurora-drop-chain',
@@ -131,6 +370,29 @@ export const necklaces = [
       Care: 'Avoid water, chemicals, and perfume',
       Origin: 'Handcrafted in Lithuania',
     },
+    variants: [
+      {
+        sku: 'AUR-DRO-42-GD',
+        size: '42 cm',
+        color: 'Gold',
+        material: 'Gold Vermeil',
+        stock: 9,
+      },
+      {
+        sku: 'AUR-DRO-47-GD',
+        size: '47 cm',
+        color: 'Gold',
+        material: 'Gold Vermeil',
+        stock: 7,
+      },
+      {
+        sku: 'AUR-DRO-42-SL',
+        size: '42 cm',
+        color: 'Silver',
+        material: 'Sterling Silver',
+        stock: 4,
+      },
+    ],
   },
   {
     slug: 'halo-pearl-thread',
@@ -157,7 +419,179 @@ export const necklaces = [
       Care: 'Last on, first off; wipe with soft cloth after wear',
       Origin: 'Handcrafted in Lithuania',
     },
+    variants: [
+      {
+        sku: 'HAL-PEA-42-RW',
+        size: '42 cm',
+        color: 'Rose White',
+        material: 'Freshwater Pearl',
+        stock: 4,
+      },
+      {
+        sku: 'HAL-PEA-45-RW',
+        size: '45 cm',
+        color: 'Rose White',
+        material: 'Freshwater Pearl',
+        stock: 6,
+      },
+      {
+        sku: 'HAL-PEA-48-CR',
+        size: '48 cm',
+        color: 'Cream',
+        material: 'Freshwater Pearl',
+        stock: 2,
+      },
+    ],
+  },
+  {
+    slug: 'solstice-layer-chain',
+    name: 'Solstice Layer Chain',
+    category: 'Necklaces',
+    priceLabel: 'EUR 119',
+    priceCents: 11900,
+    material: 'Gold vermeil',
+    description:
+      'A dual-layer chain necklace with balanced lengths for effortless stacking in one piece. Solstice Layer Chain brings a clean modern profile and works seamlessly with pendants or solo styling.',
+    image:
+      'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=900&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&w=900&q=80',
+    ],
+    specs: {
+      Material: '18k gold vermeil',
+      Layers: '2 chains (40 cm + 46 cm)',
+      'Link type': 'Fine cable chain',
+      Closure: 'Lobster clasp',
+      Extension: '5 cm',
+      Care: 'Store in pouch and avoid moisture',
+      Origin: 'Handcrafted in Lithuania',
+    },
+    variants: [
+      {
+        sku: 'SOL-LAY-40-GD',
+        size: '40/46 cm',
+        color: 'Gold',
+        material: 'Gold Vermeil',
+        stock: 11,
+      },
+      {
+        sku: 'SOL-LAY-42-GD',
+        size: '42/48 cm',
+        color: 'Gold',
+        material: 'Gold Vermeil',
+        stock: 8,
+      },
+      {
+        sku: 'SOL-LAY-40-SL',
+        size: '40/46 cm',
+        color: 'Silver',
+        material: 'Sterling Silver',
+        stock: 5,
+      },
+    ],
+  },
+  {
+    slug: 'stella-locket-necklace',
+    name: 'Stella Locket Necklace',
+    category: 'Necklaces',
+    priceLabel: 'EUR 179',
+    priceCents: 17900,
+    material: 'Rose gold vermeil',
+    description:
+      'A slim oval locket designed to hold a tiny keepsake, suspended on a polished rose gold chain. Stella Locket Necklace combines sentimental value with a refined contemporary shape.',
+    image:
+      'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=900&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?auto=format&fit=crop&w=900&q=80',
+    ],
+    specs: {
+      Material: 'Rose gold vermeil over sterling silver',
+      Pendant: 'Oval locket, 16 x 12 mm',
+      'Chain length': '45 cm + 5 cm extension',
+      Closure: 'Spring ring clasp',
+      Interior: 'Holds mini photo or note',
+      Care: 'Avoid perfumes and water exposure',
+      Origin: 'Handcrafted in Lithuania',
+    },
+    variants: [
+      {
+        sku: 'STE-LOC-45-RG',
+        size: '45 cm',
+        color: 'Rose Gold',
+        material: 'Rose Gold Vermeil',
+        stock: 5,
+      },
+      {
+        sku: 'STE-LOC-50-RG',
+        size: '50 cm',
+        color: 'Rose Gold',
+        material: 'Rose Gold Vermeil',
+        stock: 4,
+      },
+      {
+        sku: 'STE-LOC-45-SL',
+        size: '45 cm',
+        color: 'Silver',
+        material: 'Sterling Silver',
+        stock: 3,
+      },
+    ],
+  },
+  {
+    slug: 'cascade-pearl-drop',
+    name: 'Cascade Pearl Drop',
+    category: 'Necklaces',
+    priceLabel: 'EUR 149',
+    priceCents: 14900,
+    material: 'Freshwater pearl and silver',
+    description:
+      'A modern drop necklace featuring a vertical pearl sequence and a delicate silver chain. The Cascade Pearl Drop adds gentle movement and a polished finish to evening and day looks alike.',
+    image:
+      'https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&w=900&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?auto=format&fit=crop&w=900&q=80',
+      'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=900&q=80',
+    ],
+    specs: {
+      Material: 'Sterling silver with freshwater pearls',
+      'Pearl size': '4-6 mm graduated',
+      'Drop length': '28 mm',
+      'Chain length': '42 cm + 5 cm extension',
+      Closure: 'Lobster clasp',
+      Care: 'Last on, first off; wipe after wear',
+      Origin: 'Handcrafted in Lithuania',
+    },
+    variants: [
+      {
+        sku: 'CAS-PEA-42-WH',
+        size: '42 cm',
+        color: 'White Pearl',
+        material: 'Silver + Freshwater Pearl',
+        stock: 7,
+      },
+      {
+        sku: 'CAS-PEA-45-WH',
+        size: '45 cm',
+        color: 'White Pearl',
+        material: 'Silver + Freshwater Pearl',
+        stock: 6,
+      },
+      {
+        sku: 'CAS-PEA-42-RS',
+        size: '42 cm',
+        color: 'Rose Pearl',
+        material: 'Rose Gold + Freshwater Pearl',
+        stock: 3,
+      },
+    ],
   },
 ];
 
 export const allProducts = [...bracelets, ...necklaces];
+
+export const getItemKey = (productSlug, sku) => `${productSlug}::${sku}`;
