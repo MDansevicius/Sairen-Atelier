@@ -1,47 +1,51 @@
 # Sairen Atelier E-Shop
 
-A simple e-commerce application with Next.js frontend, Node.js backend, and PostgreSQL database.
+A simple e-commerce application built with Next.js frontend, Node.js backend, and PostgreSQL.
 
-## Structure
-- `backend/`: Express.js API server
-- `frontend/`: Next.js web app
-- `k8s/`: Kubernetes manifests
+## Repository Layout
+- `backend/`: Express API, database access, and product endpoints.
+- `frontend/`: Next.js web application.
+- `k8s/`: Kubernetes manifests for `dev` and `prod` environments.
+- `.github/workflows/`: CI image build and push pipeline.
 
-## Development
-1. Build and push Docker images:
-   - `dev` branch publishes `:dev` images
-    - `main` branch publishes `:latest` images
-    - Backend image: `ghcr.io/<owner>/sairen-atelier/backend:<tag>`
-    - Frontend image: `ghcr.io/<owner>/sairen-atelier/frontend:<tag>`
-   - Push to registry
+## Environment Model
+- `dev` branch:
+  - Builds and pushes `ghcr.io/<owner>/sairen-atelier/backend:dev`.
+  - Builds and pushes `ghcr.io/<owner>/sairen-atelier/frontend:dev`.
+  - Deployed by ArgoCD app `eshop-dev` to namespace `eshop-dev`.
+  - Public URL: `https://dev.sairen.lt`.
+- `main` branch:
+  - Builds and pushes `ghcr.io/<owner>/sairen-atelier/backend:latest`.
+  - Builds and pushes `ghcr.io/<owner>/sairen-atelier/frontend:latest`.
+  - Deployed by ArgoCD app `eshop-prod` to namespace `eshop-prod`.
+  - Public URL: `https://sairen.lt`.
 
-2. Deploy via ArgoCD from infra repo.
-
-## Kubernetes Environments
-- `k8s/dev` deploys to namespace `eshop-dev` and uses `dev.sairen.lt`.
-- `k8s/prod` deploys to namespace `eshop-prod` and uses `sairen.lt`.
-- Both environments expose:
-   - `/` -> frontend service
-   - `/api` -> backend service
+## Deployment Flow
+1. Push changes to `dev`.
+2. GitHub Actions workflow in `.github/workflows/build.yml` builds and pushes `:dev` images.
+3. ArgoCD syncs `k8s/dev` and deploys to `dev.sairen.lt`.
+4. After validation, merge `dev` into `main`.
+5. GitHub Actions builds and pushes `:latest` images.
+6. ArgoCD syncs `k8s/prod` and deploys to `sairen.lt`.
 
 ## Secrets
-- Environment-specific credentials are defined in:
-   - `k8s/dev/backend-secret.yaml`
-   - `k8s/dev/postgres-secret.yaml`
-   - `k8s/prod/backend-secret.yaml`
-   - `k8s/prod/postgres-secret.yaml`
-- Replace placeholder values before deploying to production.
-- For now, secrets are managed as regular Kubernetes `Secret` manifests in this repo.
-- Rotate credentials immediately if these files are ever exposed.
+- Current approach: plain Kubernetes Secret manifests in git.
+- Secret files:
+  - `k8s/dev/backend-secret.yaml`
+  - `k8s/dev/postgres-secret.yaml`
+  - `k8s/prod/backend-secret.yaml`
+  - `k8s/prod/postgres-secret.yaml`
+- Replace placeholder values before production usage.
+- Rotate credentials if these files are exposed.
 
-## Branch to Environment Mapping
-- `dev` branch builds and pushes `:dev` images.
-- `main` branch builds and pushes `:latest` images.
-- Infra Argo apps should track:
-   - `eshop-dev` -> `dev`
-   - `eshop-prod` -> `main`
+## Quick Verification After Deploy
+1. Confirm workflow success in GitHub Actions.
+2. Confirm Argo app `Synced` and `Healthy`.
+3. Open app URL and test API endpoint:
+   - Dev: `https://dev.sairen.lt/api/products`
+   - Prod: `https://sairen.lt/api/products`
 
-## TODO
-- Add authentication
-- Product management
-- Payment integration
+## Future Improvements
+- Move secrets to a secure solution (for example External Secrets, SOPS, or Sealed Secrets).
+- Add authentication.
+- Add product management UI and payment integration.
