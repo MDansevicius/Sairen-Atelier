@@ -1,24 +1,28 @@
 import Head from 'next/head';
+import { useMemo, useState } from 'react';
 import styles from '../styles/Home.module.css';
 
 const bracelets = [
   {
     name: 'Starlit Cuff',
-    price: 'EUR 119',
+    priceLabel: 'EUR 119',
+    priceCents: 11900,
     material: 'Gold-plated brass',
     image:
       'https://images.unsplash.com/photo-1611085583191-a3b181a88401?auto=format&fit=crop&w=900&q=80',
   },
   {
     name: 'Velvet Chain Bracelet',
-    price: 'EUR 89',
+    priceLabel: 'EUR 89',
+    priceCents: 8900,
     material: 'Sterling silver',
     image:
       'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=900&q=80',
   },
   {
     name: 'Northern Charm Stack',
-    price: 'EUR 149',
+    priceLabel: 'EUR 149',
+    priceCents: 14900,
     material: '14k rose finish',
     image:
       'https://images.unsplash.com/photo-1635767798638-3e25273a8236?auto=format&fit=crop&w=900&q=80',
@@ -28,28 +32,31 @@ const bracelets = [
 const necklaces = [
   {
     name: 'Moonline Pendant',
-    price: 'EUR 129',
+    priceLabel: 'EUR 129',
+    priceCents: 12900,
     material: 'Silver and moonstone',
     image:
       'https://images.unsplash.com/photo-1599643478518-17488fbbcd77?auto=format&fit=crop&w=900&q=80',
   },
   {
     name: 'Aurora Drop Chain',
-    price: 'EUR 109',
+    priceLabel: 'EUR 109',
+    priceCents: 10900,
     material: 'Gold vermeil',
     image:
       'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=900&q=80',
   },
   {
     name: 'Halo Pearl Thread',
-    price: 'EUR 159',
+    priceLabel: 'EUR 159',
+    priceCents: 15900,
     material: 'Freshwater pearl',
     image:
       'https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&w=900&q=80',
   },
 ];
 
-function ProductCard({ product, index }) {
+function ProductCard({ product, index, onAdd }) {
   return (
     <article className={styles.productCard} style={{ animationDelay: `${index * 90}ms` }}>
       <img className={styles.productImage} src={product.image} alt={product.name} />
@@ -57,8 +64,8 @@ function ProductCard({ product, index }) {
         <h3>{product.name}</h3>
         <p>{product.material}</p>
         <div className={styles.productMeta}>
-          <strong>{product.price}</strong>
-          <button type="button">Add to Bag</button>
+          <strong>{product.priceLabel}</strong>
+          <button type="button" onClick={() => onAdd(product)}>Add to Bag</button>
         </div>
       </div>
     </article>
@@ -66,6 +73,77 @@ function ProductCard({ product, index }) {
 }
 
 export default function Home() {
+  const [cartOpen, setCartOpen] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState('');
+  const [cart, setCart] = useState([]);
+
+  const cartCount = useMemo(
+    () => cart.reduce((total, item) => total + item.quantity, 0),
+    [cart]
+  );
+
+  const cartTotalLabel = useMemo(() => {
+    const totalCents = cart.reduce((total, item) => total + item.priceCents * item.quantity, 0);
+    return new Intl.NumberFormat('en-IE', {
+      style: 'currency',
+      currency: 'EUR',
+    }).format(totalCents / 100);
+  }, [cart]);
+
+  const addToCart = (product) => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item.name === product.name);
+      if (existing) {
+        return prev.map((item) =>
+          item.name === product.name ? { ...item, quantity: item.quantity + 1 } : item
+        );
+      }
+      return [...prev, { ...product, quantity: 1 }];
+    });
+    setCartOpen(true);
+  };
+
+  const removeFromCart = (name) => {
+    setCart((prev) => prev.filter((item) => item.name !== name));
+  };
+
+  const startCheckout = async () => {
+    if (cart.length === 0 || checkoutLoading) {
+      return;
+    }
+
+    setCheckoutError('');
+    setCheckoutLoading(true);
+
+    try {
+      const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || '';
+      const response = await fetch(`${apiBaseUrl}/api/checkout/create-session`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          origin: typeof window !== 'undefined' ? window.location.origin : '',
+          items: cart.map((item) => ({
+            name: item.name,
+            priceCents: item.priceCents,
+            quantity: item.quantity,
+            image: item.image,
+          })),
+        }),
+      });
+
+      const payload = await response.json();
+      if (!response.ok || !payload.url) {
+        throw new Error(payload.error || 'Unable to start checkout.');
+      }
+
+      window.location.href = payload.url;
+    } catch (error) {
+      setCheckoutError(error.message || 'Checkout failed.');
+      setCheckoutLoading(false);
+    }
+  };
+
   return (
     <>
       <Head>
@@ -77,6 +155,59 @@ export default function Home() {
       </Head>
 
       <main className={styles.page}>
+        <header className={styles.brandHeader}>
+          <a className={styles.brandMark} href="/" aria-label="SAIREN home">
+            SAIREN
+          </a>
+          <button className={styles.cartButton} type="button" onClick={() => setCartOpen(true)}>
+            <span className={styles.cartIcon} aria-hidden="true">
+              <svg viewBox="0 0 24 24" role="img" aria-label="Shopping bag icon">
+                <path d="M7 8V7a5 5 0 0110 0v1h2a1 1 0 011 1l-1 10a2 2 0 01-2 2H7a2 2 0 01-2-2L4 9a1 1 0 011-1h2zm2 0h6V7a3 3 0 00-6 0v1zm-2.98 2l.87 8.72a.5.5 0 00.5.48h9.22a.5.5 0 00.5-.48L18 10H6.02z" />
+              </svg>
+            </span>
+            <span className={styles.cartCount}>{cartCount}</span>
+          </button>
+        </header>
+
+        {cartOpen ? (
+          <aside className={styles.cartDrawer} aria-label="Shopping cart">
+            <div className={styles.cartHeader}>
+              <h2>Your Bag</h2>
+              <button type="button" onClick={() => setCartOpen(false)}>
+                Close
+              </button>
+            </div>
+
+            {cart.length === 0 ? (
+              <p className={styles.cartEmpty}>Your bag is empty. Add bracelets or necklaces.</p>
+            ) : (
+              <>
+                <ul className={styles.cartList}>
+                  {cart.map((item) => (
+                    <li key={item.name} className={styles.cartItem}>
+                      <img src={item.image} alt={item.name} />
+                      <div>
+                        <strong>{item.name}</strong>
+                        <p>{item.priceLabel} x {item.quantity}</p>
+                      </div>
+                      <button type="button" onClick={() => removeFromCart(item.name)}>
+                        Remove
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+                <div className={styles.cartFooter}>
+                  <p>Total: {cartTotalLabel}</p>
+                  <button type="button" onClick={startCheckout} disabled={checkoutLoading}>
+                    {checkoutLoading ? 'Redirecting...' : 'Checkout'}
+                  </button>
+                  {checkoutError ? <span className={styles.checkoutError}>{checkoutError}</span> : null}
+                </div>
+              </>
+            )}
+          </aside>
+        ) : null}
+
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
             <span className={styles.eyebrow}>New Atelier Collection</span>
@@ -117,7 +248,7 @@ export default function Home() {
           </header>
           <div className={styles.productGrid}>
             {bracelets.map((product, index) => (
-              <ProductCard key={product.name} product={product} index={index} />
+              <ProductCard key={product.name} product={product} index={index} onAdd={addToCart} />
             ))}
           </div>
         </section>
@@ -129,7 +260,7 @@ export default function Home() {
           </header>
           <div className={styles.productGrid}>
             {necklaces.map((product, index) => (
-              <ProductCard key={product.name} product={product} index={index} />
+              <ProductCard key={product.name} product={product} index={index} onAdd={addToCart} />
             ))}
           </div>
         </section>
