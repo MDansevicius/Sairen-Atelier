@@ -1,66 +1,39 @@
-import { useEffect, useState } from 'react';
+import React from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
+import styles from '../styles/Home.module.css';
 
-export default function Home() {
-  const [products, setProducts] = useState([]);
-  const [newProduct, setNewProduct] = useState({ name: '', price: '', description: '' });
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  const fetchProducts = async () => {
-    const res = await fetch('/api/products');
-    const data = await res.json();
-    setProducts(data);
-  };
-
-  const addProduct = async (e) => {
-    e.preventDefault();
-    await fetch('/api/products', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(newProduct),
-    });
-    setNewProduct({ name: '', price: '', description: '' });
-    fetchProducts();
-  };
-
+const Home = () => {
   return (
-    <div style={{ padding: '20px' }}>
-      <h1>Sairen Atelier E-Shop</h1>
-      <ul>
-        {products.map(product => (
-          <li key={product.id}>
-            <strong>{product.name}</strong> - ${product.price} <br />
-            {product.description}
-          </li>
-        ))}
-      </ul>
-      <h2>Add Product</h2>
-      <form onSubmit={addProduct}>
-        <input
-          type="text"
-          placeholder="Name"
-          value={newProduct.name}
-          onChange={(e) => setNewProduct({ ...newProduct, name: e.target.value })}
-          required
-        />
-        <input
-          type="number"
-          step="0.01"
-          placeholder="Price"
-          value={newProduct.price}
-          onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Description"
-          value={newProduct.description}
-          onChange={(e) => setNewProduct({ ...newProduct, description: e.target.value })}
-        />
-        <button type="submit">Add</button>
-      </form>
-    </div>
+    <Container className={styles.container}>
+      <Row>
+        <Col md={8} offsetMd={2}>
+          <h1 className={styles.title}>Welcome to SAIREN Jewelry</h1>
+          <p className={styles.description}>Explore our exquisite collection of bracelets and necklaces.</p>
+        </Col>
+      </Row>
+      <Row className={styles.products}>
+        {/* Bracelet */}
+        <Col md={4} sm={6} xs={12}>
+          <div className={styles.productCard}>
+            <img src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0" alt="Crystal Wish Bracelet" />
+            <h3>Crystal Wish Bracelet</h3>
+            <p>Elegant crystal-encrusted bracelet with sterling silver clasp</p>
+            <button className={styles.button}>Add to Cart</button>
+          </div>
+        </Col>
+
+        {/* Necklace */}
+        <Col md={4} sm={6} xs={12}>
+          <div className={styles.productCard}>
+            <img src="https://images.unsplash.com/photo-1599643478518-17488fbbcd77" alt="Moonstone Pendant Necklace" />
+            <h3>Moonstone Pendant Necklace</h3>
+            <p>Beautiful moonstone pendant on delicate silver chain</p>
+            <button className={styles.button}>Add to Cart</button>
+          </div>
+        </Col>
+      </Row>
+    </Container>
   );
-}
+};
+
+export default Home;
