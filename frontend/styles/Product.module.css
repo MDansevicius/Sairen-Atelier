@@ -158,6 +158,22 @@
   margin-bottom: 2rem;
 }
 
+.variantMeta {
+  display: grid;
+  gap: 0.25rem;
+  margin: 0 0 1rem;
+  font-size: 0.84rem;
+  color: var(--ink-soft);
+}
+
+.variantMeta p {
+  margin: 0;
+}
+
+.variantMeta strong {
+  color: var(--ink);
+}
+
 /* ── Add to Bag ─────────────────────────────────────────── */
 .addBtn {
   width: 100%;
@@ -178,6 +194,13 @@
 .addBtn:hover {
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(181, 112, 127, 0.35);
+}
+
+.addBtn:disabled {
+  opacity: 0.56;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 /* ── Specs table ─────────────────────────────────────────── */
