@@ -25,3 +25,6 @@ Node.js + Express API for Sairen Atelier.
 
 ## Notes
 - In Kubernetes, backend environment is injected from ConfigMap and Secret manifests.
+- For Stripe checkout, backend also needs:
+   - `STRIPE_SECRET_KEY`
+   - `CHECKOUT_BASE_URL`

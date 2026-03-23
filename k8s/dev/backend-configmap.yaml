@@ -6,3 +6,4 @@ data:
   PORT: "3001"
   DB_HOST: "postgres"
   DB_PORT: "5432"
+  CHECKOUT_BASE_URL: "https://dev.sairen.lt"
