@@ -549,8 +549,13 @@
 .collectionHeader {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: flex-end;
   margin-bottom: 1.15rem;
+}
+
+.collectionHeading {
+  display: grid;
+  gap: 0.35rem;
 }
 
 .collectionHeader span {
@@ -558,6 +563,62 @@
   text-transform: uppercase;
   font-size: 0.78rem;
   color: #9b6773;
+}
+
+.collectionCarousel {
+  position: relative;
+}
+
+.carouselArrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 1px solid rgba(181, 112, 127, 0.28);
+  background: rgba(255, 255, 255, 0.82);
+  color: #a44b61;
+  font-size: 2rem;
+  line-height: 1;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  cursor: pointer;
+  font-weight: 500;
+  z-index: 2;
+  box-shadow: 0 10px 20px rgba(124, 88, 99, 0.12);
+  transition: color 180ms ease, background 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.carouselArrow:hover {
+  color: #8e3d51;
+  background: #fff;
+  box-shadow: 0 14px 24px rgba(124, 88, 99, 0.18);
+  transform: translateY(-50%) scale(1.05);
+}
+
+.carouselArrow:focus-visible {
+  outline: 2px solid rgba(164, 75, 97, 0.36);
+  outline-offset: 2px;
+}
+
+.carouselArrow:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.carouselArrow:disabled:hover {
+  transform: translateY(-50%);
+}
+
+.carouselArrowLeft {
+  left: -1.8rem;
+}
+
+.carouselArrowRight {
+  right: -1.8rem;
 }
 
 .productGrid {
@@ -670,6 +731,14 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .carouselArrowLeft {
+    left: -1.1rem;
+  }
+
+  .carouselArrowRight {
+    right: -1.1rem;
+  }
+
   .filterBar {
     grid-template-columns: 1fr;
     align-items: start;
@@ -704,6 +773,24 @@
 
   .productGrid {
     grid-template-columns: 1fr;
+  }
+
+  .collectionCarousel {
+    padding: 0 2.1rem;
+  }
+
+  .carouselArrow {
+    width: 2.3rem;
+    height: 2.3rem;
+    font-size: 1.75rem;
+  }
+
+  .carouselArrowLeft {
+    left: 0.2rem;
+  }
+
+  .carouselArrowRight {
+    right: 0.2rem;
   }
 
   .productImage {

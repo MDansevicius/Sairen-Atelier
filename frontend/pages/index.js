@@ -1,10 +1,16 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useMemo, useState } from 'react';
 import styles from '../styles/Home.module.css';
 import { bracelets, necklaces } from '../data/products';
 import { useCart } from '../context/CartContext';
+import { getTranslations, withVars } from '../lib/i18n';
+import { localizeProducts } from '../lib/productLocalization';
 
-function ProductCard({ product, index, onAdd }) {
+const ITEMS_PER_VIEW = 3;
+
+function ProductCard({ product, index, onAdd, addLabel }) {
   return (
     <article className={styles.productCard} style={{ animationDelay: `${index * 90}ms` }}>
       <Link href={`/products/${product.slug}`} className={styles.productImageLink}>
@@ -17,7 +23,7 @@ function ProductCard({ product, index, onAdd }) {
         <p>{product.material}</p>
         <div className={styles.productMeta}>
           <strong>{product.priceLabel}</strong>
-          <button type="button" onClick={() => onAdd(product)}>Add to Bag</button>
+          <button type="button" onClick={() => onAdd(product)}>{addLabel}</button>
         </div>
       </div>
     </article>
@@ -25,6 +31,55 @@ function ProductCard({ product, index, onAdd }) {
 }
 
 export default function Home() {
+  const { locale } = useRouter();
+  const t = getTranslations(locale || 'lt');
+  const localizedBracelets = useMemo(
+    () => localizeProducts(bracelets, locale || 'lt'),
+    [locale]
+  );
+  const localizedNecklaces = useMemo(
+    () => localizeProducts(necklaces, locale || 'lt'),
+    [locale]
+  );
+  const [braceletsStart, setBraceletsStart] = useState(0);
+  const [necklacesStart, setNecklacesStart] = useState(0);
+
+  const visibleBracelets = useMemo(() => {
+    if (localizedBracelets.length <= ITEMS_PER_VIEW) {
+      return localizedBracelets;
+    }
+    return Array.from({ length: ITEMS_PER_VIEW }, (_, offset) => {
+      const index = (braceletsStart + offset) % localizedBracelets.length;
+      return localizedBracelets[index];
+    });
+  }, [braceletsStart, localizedBracelets]);
+
+  const visibleNecklaces = useMemo(() => {
+    if (localizedNecklaces.length <= ITEMS_PER_VIEW) {
+      return localizedNecklaces;
+    }
+    return Array.from({ length: ITEMS_PER_VIEW }, (_, offset) => {
+      const index = (necklacesStart + offset) % localizedNecklaces.length;
+      return localizedNecklaces[index];
+    });
+  }, [localizedNecklaces, necklacesStart]);
+
+  const showPrevBracelets = () => {
+    setBraceletsStart((prev) => (prev - ITEMS_PER_VIEW + localizedBracelets.length) % localizedBracelets.length);
+  };
+
+  const showNextBracelets = () => {
+    setBraceletsStart((prev) => (prev + ITEMS_PER_VIEW) % localizedBracelets.length);
+  };
+
+  const showPrevNecklaces = () => {
+    setNecklacesStart((prev) => (prev - ITEMS_PER_VIEW + localizedNecklaces.length) % localizedNecklaces.length);
+  };
+
+  const showNextNecklaces = () => {
+    setNecklacesStart((prev) => (prev + ITEMS_PER_VIEW) % localizedNecklaces.length);
+  };
+
   const {
     cart,
     cartOpen,
@@ -50,21 +105,18 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>SAIREN Jewelry | Bracelets and Necklaces</title>
-        <meta
-          name="description"
-          content="Discover SAIREN's curated bracelets and necklaces crafted for daily elegance."
-        />
+        <title>{t.metaHomeTitle}</title>
+        <meta name="description" content={t.metaHomeDescription} />
       </Head>
 
       <main className={styles.page}>
         <header className={styles.brandHeader}>
-          <a className={styles.brandMark} href="/" aria-label="SAIREN home">
+          <Link className={styles.brandMark} href="/" aria-label={t.brandHomeAria}>
             SAIREN
-          </a>
+          </Link>
           <button className={styles.cartButton} type="button" onClick={() => setCartOpen(true)}>
             <span className={styles.cartIcon} aria-hidden="true">
-              <svg viewBox="0 0 24 24" role="img" aria-label="Shopping bag icon">
+              <svg viewBox="0 0 24 24" role="img" aria-label={t.shoppingBagIconAria}>
                 <path d="M7 8V7a5 5 0 0110 0v1h2a1 1 0 011 1l-1 10a2 2 0 01-2 2H7a2 2 0 01-2-2L4 9a1 1 0 011-1h2zm2 0h6V7a3 3 0 00-6 0v1zm-2.98 2l.87 8.72a.5.5 0 00.5.48h9.22a.5.5 0 00.5-.48L18 10H6.02z" />
               </svg>
             </span>
@@ -73,16 +125,16 @@ export default function Home() {
         </header>
 
         {cartOpen ? (
-          <aside className={styles.cartDrawer} aria-label="Shopping cart">
+          <aside className={styles.cartDrawer} aria-label={t.shoppingCartAria}>
             <div className={styles.cartHeader}>
-              <h2>Your Bag</h2>
+              <h2>{t.yourBag}</h2>
               <button type="button" onClick={() => setCartOpen(false)}>
-                Close
+                {t.close}
               </button>
             </div>
 
             {cart.length === 0 ? (
-              <p className={styles.cartEmpty}>Your bag is empty. Add bracelets or necklaces.</p>
+              <p className={styles.cartEmpty}>{t.bagEmpty}</p>
             ) : (
               <>
                 <ul className={styles.cartList}>
@@ -97,7 +149,7 @@ export default function Home() {
                             type="button"
                             className={styles.qtyBtn}
                             onClick={() => decrementQuantity(item.itemKey)}
-                            aria-label={`Decrease ${item.name} quantity`}
+                            aria-label={withVars(t.decreaseQuantity, { name: item.name })}
                           >
                             -
                           </button>
@@ -106,7 +158,7 @@ export default function Home() {
                             type="button"
                             className={styles.qtyBtn}
                             onClick={() => incrementQuantity(item.itemKey)}
-                            aria-label={`Increase ${item.name} quantity`}
+                            aria-label={withVars(t.increaseQuantity, { name: item.name })}
                           >
                             +
                           </button>
@@ -117,39 +169,39 @@ export default function Home() {
                         type="button"
                         onClick={() => removeFromCart(item.itemKey)}
                       >
-                        Remove
+                        {t.remove}
                       </button>
                     </li>
                   ))}
                 </ul>
                 {lastRemovedItem ? (
                   <div className={styles.undoBanner}>
-                    <span>Removed {lastRemovedItem.name}.</span>
+                    <span>{withVars(t.removedItem, { name: lastRemovedItem.name })}</span>
                     <button type="button" onClick={undoRemoveFromCart}>
-                      Undo
+                      {t.undo}
                     </button>
                   </div>
                 ) : null}
                 <div className={styles.cartFooter}>
                   <div className={styles.cartRow}>
-                    <span>Subtotal</span>
+                    <span>{t.subtotal}</span>
                     <strong>{subtotalLabel}</strong>
                   </div>
                   <div className={styles.cartRow}>
-                    <span>Shipping</span>
+                    <span>{t.shipping}</span>
                     <strong>{shippingLabel}</strong>
                   </div>
                   <p className={styles.shippingHint}>{shippingHint}</p>
                   <div className={styles.cartRowTotal}>
-                    <span>Total</span>
+                    <span>{t.total}</span>
                     <strong>{cartTotalLabel}</strong>
                   </div>
                   <button type="button" onClick={startCheckout} disabled={checkoutLoading}>
                     {checkoutState === 'creating'
-                      ? 'Creating session...'
+                      ? t.creatingSessionShort
                       : checkoutState === 'redirecting'
-                        ? 'Redirecting...'
-                        : 'Checkout'}
+                        ? t.redirectingShort
+                        : t.checkout}
                   </button>
                   {checkoutStatusText ? (
                     <span className={styles.checkoutStatus}>{checkoutStatusText}</span>
@@ -163,62 +215,119 @@ export default function Home() {
 
         <section className={styles.hero}>
           <div className={styles.heroCopy}>
-            <span className={styles.eyebrow}>New Atelier Collection</span>
-            <h1>Refined Jewelry for Quiet Luxury</h1>
-            <p>
-              Discover sculpted bracelets and delicate necklaces designed to layer, gift, and keep
-              for years.
-            </p>
+            <span className={styles.eyebrow}>{t.heroEyebrow}</span>
+            <h1>{t.heroTitle}</h1>
+            <p>{t.heroDescription}</p>
             <div className={styles.heroActions}>
-              <Link href="/bracelets">Shop Bracelets</Link>
+              <Link href="/bracelets">{t.shopBracelets}</Link>
               <Link href="/necklaces" className={styles.ghostBtn}>
-                Shop Necklaces
+                {t.shopNecklaces}
               </Link>
             </div>
           </div>
           <div className={styles.heroPanel}>
-            <p>Hand-finished details</p>
-            <p>Premium metals and stones</p>
-            <p>Worldwide delivery in 3-5 days</p>
+            <p>{t.heroPanelOne}</p>
+            <p>{t.heroPanelTwo}</p>
+            <p>{t.heroPanelThree}</p>
           </div>
         </section>
 
         <section className={styles.categoryStrip}>
           <article>
             <h2>
-              <Link href="/bracelets" className={styles.categoryLink}>Bracelets</Link>
+              <Link href="/bracelets" className={styles.categoryLink}>{t.bracelets}</Link>
             </h2>
-            <p>Statement cuffs, chain layers, and charm stacks made to mix and match.</p>
+            <p>{t.categoryBraceletsDesc}</p>
           </article>
           <article>
             <h2>
-              <Link href="/necklaces" className={styles.categoryLink}>Necklaces</Link>
+              <Link href="/necklaces" className={styles.categoryLink}>{t.necklaces}</Link>
             </h2>
-            <p>From minimal pendants to expressive layered lines for day-to-evening wear.</p>
+            <p>{t.categoryNecklacesDesc}</p>
           </article>
         </section>
 
         <section id="bracelets" className={styles.collectionSection}>
           <header className={styles.collectionHeader}>
-            <span>Collection 01</span>
-            <h2>Bracelets</h2>
+            <div className={styles.collectionHeading}>
+              <span>{t.collection01}</span>
+              <h2>
+                <Link href="/bracelets" className={styles.categoryLink}>{t.bracelets}</Link>
+              </h2>
+            </div>
           </header>
-          <div className={styles.productGrid}>
-            {bracelets.map((product, index) => (
-              <ProductCard key={product.name} product={product} index={index} onAdd={addToCart} />
-            ))}
+          <div className={styles.collectionCarousel}>
+            <button
+              className={`${styles.carouselArrow} ${styles.carouselArrowLeft}`}
+              type="button"
+              onClick={showPrevBracelets}
+              aria-label={t.showPrevBracelets}
+              disabled={localizedBracelets.length <= ITEMS_PER_VIEW}
+            >
+              ‹
+            </button>
+            <div className={styles.productGrid}>
+              {visibleBracelets.map((product, index) => (
+                <ProductCard
+                  key={`${product.slug}-${index}`}
+                  product={product}
+                  index={index}
+                  onAdd={addToCart}
+                  addLabel={t.addToBag}
+                />
+              ))}
+            </div>
+            <button
+              className={`${styles.carouselArrow} ${styles.carouselArrowRight}`}
+              type="button"
+              onClick={showNextBracelets}
+              aria-label={t.showNextBracelets}
+              disabled={localizedBracelets.length <= ITEMS_PER_VIEW}
+            >
+              ›
+            </button>
           </div>
         </section>
 
         <section id="necklaces" className={styles.collectionSection}>
           <header className={styles.collectionHeader}>
-            <span>Collection 02</span>
-            <h2>Necklaces</h2>
+            <div className={styles.collectionHeading}>
+              <span>{t.collection02}</span>
+              <h2>
+                <Link href="/necklaces" className={styles.categoryLink}>{t.necklaces}</Link>
+              </h2>
+            </div>
           </header>
-          <div className={styles.productGrid}>
-            {necklaces.map((product, index) => (
-              <ProductCard key={product.name} product={product} index={index} onAdd={addToCart} />
-            ))}
+          <div className={styles.collectionCarousel}>
+            <button
+              className={`${styles.carouselArrow} ${styles.carouselArrowLeft}`}
+              type="button"
+              onClick={showPrevNecklaces}
+              aria-label={t.showPrevNecklaces}
+              disabled={localizedNecklaces.length <= ITEMS_PER_VIEW}
+            >
+              ‹
+            </button>
+            <div className={styles.productGrid}>
+              {visibleNecklaces.map((product, index) => (
+                <ProductCard
+                  key={`${product.slug}-${index}`}
+                  product={product}
+                  index={index}
+                  onAdd={addToCart}
+                  addLabel={t.addToBag}
+                />
+              ))}
+            </div>
+            <button
+              className={`${styles.carouselArrow} ${styles.carouselArrowRight}`}
+              type="button"
+              onClick={showNextNecklaces}
+              aria-label={t.showNextNecklaces}
+              disabled={localizedNecklaces.length <= ITEMS_PER_VIEW}
+            >
+              ›
+            </button>
           </div>
         </section>
 

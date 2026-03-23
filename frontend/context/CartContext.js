@@ -1,12 +1,9 @@
 import { createContext, useContext, useState, useMemo } from 'react';
+import { useRouter } from 'next/router';
 import { getItemKey } from '../data/products';
+import { getTranslations, withVars } from '../lib/i18n';
 
 const CartContext = createContext(null);
-const formatEuro = (valueCents) =>
-  new Intl.NumberFormat('en-IE', {
-    style: 'currency',
-    currency: 'EUR',
-  }).format(valueCents / 100);
 
 const getFallbackVariant = (product, cart) => {
   if (!product?.variants?.length) return null;
@@ -20,11 +17,19 @@ const getFallbackVariant = (product, cart) => {
 };
 
 export function CartProvider({ children }) {
+  const { locale } = useRouter();
+  const t = useMemo(() => getTranslations(locale || 'lt'), [locale]);
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutState, setCheckoutState] = useState('idle');
   const [checkoutError, setCheckoutError] = useState('');
   const [lastRemovedItem, setLastRemovedItem] = useState(null);
+
+  const formatEuro = (valueCents) =>
+    new Intl.NumberFormat(locale === 'en' ? 'en-IE' : 'lt-LT', {
+      style: 'currency',
+      currency: 'EUR',
+    }).format(valueCents / 100);
 
   const cartCount = useMemo(
     () => cart.reduce((total, item) => total + item.quantity, 0),
@@ -40,23 +45,23 @@ export function CartProvider({ children }) {
     return subtotalCents >= 15000 ? 0 : 690;
   }, [subtotalCents]);
   const cartTotalCents = subtotalCents + shippingCents;
-  const subtotalLabel = useMemo(() => formatEuro(subtotalCents), [subtotalCents]);
+  const subtotalLabel = useMemo(() => formatEuro(subtotalCents), [subtotalCents, locale]);
   const shippingLabel = useMemo(
-    () => (shippingCents === 0 ? 'Free' : formatEuro(shippingCents)),
-    [shippingCents]
+    () => (shippingCents === 0 ? t.free : formatEuro(shippingCents)),
+    [shippingCents, t]
   );
-  const cartTotalLabel = useMemo(() => formatEuro(cartTotalCents), [cartTotalCents]);
+  const cartTotalLabel = useMemo(() => formatEuro(cartTotalCents), [cartTotalCents, locale]);
   const shippingHint =
     subtotalCents >= 15000
-      ? 'Free shipping unlocked.'
-      : `Add ${formatEuro(15000 - subtotalCents)} more for free shipping.`;
+      ? t.freeShippingUnlocked
+      : withVars(t.addMoreForFreeShipping, { amount: formatEuro(15000 - subtotalCents) });
 
   const checkoutLoading = checkoutState === 'creating' || checkoutState === 'redirecting';
   const checkoutStatusText =
     checkoutState === 'creating'
-      ? 'Creating secure checkout session...'
+      ? t.checkoutStatusCreating
       : checkoutState === 'redirecting'
-        ? 'Session ready. Redirecting to Stripe...'
+        ? t.checkoutStatusRedirecting
         : '';
 
   const addToCart = (product, selectedVariant = null) => {
@@ -181,13 +186,13 @@ export function CartProvider({ children }) {
 
       const payload = await response.json();
       if (!response.ok || !payload.url) {
-        throw new Error(payload.error || 'Unable to start checkout.');
+        throw new Error(payload.error || t.unableToStartCheckout);
       }
 
       setCheckoutState('redirecting');
       window.location.href = payload.url;
     } catch (error) {
-      setCheckoutError(error.message || 'Checkout failed.');
+      setCheckoutError(error.message || t.checkoutFailed);
       setCheckoutState('error');
     }
   };

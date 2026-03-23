@@ -1,14 +1,22 @@
 import Head from 'next/head';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useState } from 'react';
 import styles from '../../styles/Product.module.css';
 import homeStyles from '../../styles/Home.module.css';
 import { allProducts } from '../../data/products';
 import { useCart } from '../../context/CartContext';
+import { getTranslations, translateCategory, withVars } from '../../lib/i18n';
+import { localizeProduct } from '../../lib/productLocalization';
 
-export async function getStaticPaths() {
+export async function getStaticPaths({ locales }) {
   return {
-    paths: allProducts.map((p) => ({ params: { slug: p.slug } })),
+    paths: allProducts.flatMap((p) =>
+      (locales || ['lt', 'en']).map((locale) => ({
+        params: { slug: p.slug },
+        locale,
+      }))
+    ),
     fallback: false,
   };
 }
@@ -19,6 +27,9 @@ export async function getStaticProps({ params }) {
 }
 
 export default function ProductPage({ product }) {
+  const { locale } = useRouter();
+  const t = getTranslations(locale || 'lt');
+  const localizedProduct = localizeProduct(product, locale || 'lt');
   const [activeImage, setActiveImage] = useState(0);
 
   const {
@@ -43,29 +54,29 @@ export default function ProductPage({ product }) {
     startCheckout,
   } = useCart();
 
-  if (!product) return null;
+  if (!localizedProduct) return null;
 
   return (
     <>
       <Head>
-        <title>{product.name} — SAIREN Jewelry</title>
-        <meta name="description" content={product.description} />
+        <title>{`${localizedProduct.name} - ${t.metaProductTitleSuffix}`}</title>
+        <meta name="description" content={localizedProduct.description} />
       </Head>
 
       <main className={styles.page}>
         {/* ── Header ── */}
         <header className={styles.header}>
           <Link href="/" className={styles.backLink}>
-            ← Back to shop
+            ← {t.backToShop}
           </Link>
-          <a className={styles.brandMark} href="/" aria-label="SAIREN home">
+          <Link className={styles.brandMark} href="/" aria-label={t.brandHomeAria}>
             SAIREN
-          </a>
+          </Link>
           <button
             className={styles.cartButton}
             type="button"
             onClick={() => setCartOpen(true)}
-            aria-label="Open shopping bag"
+            aria-label={t.openShoppingBag}
           >
             <span className={styles.cartIcon} aria-hidden="true">
               <svg viewBox="0 0 24 24">
@@ -78,13 +89,13 @@ export default function ProductPage({ product }) {
 
         {/* ── Cart drawer ── */}
         {cartOpen ? (
-          <aside className={homeStyles.cartDrawer} aria-label="Shopping cart">
+          <aside className={homeStyles.cartDrawer} aria-label={t.shoppingCartAria}>
             <div className={homeStyles.cartHeader}>
-              <h2>Your Bag</h2>
-              <button type="button" onClick={() => setCartOpen(false)}>Close</button>
+              <h2>{t.yourBag}</h2>
+              <button type="button" onClick={() => setCartOpen(false)}>{t.close}</button>
             </div>
             {cart.length === 0 ? (
-              <p className={homeStyles.cartEmpty}>Your bag is empty.</p>
+              <p className={homeStyles.cartEmpty}>{t.bagEmpty}</p>
             ) : (
               <>
                 <ul className={homeStyles.cartList}>
@@ -99,7 +110,7 @@ export default function ProductPage({ product }) {
                             type="button"
                             className={homeStyles.qtyBtn}
                             onClick={() => decrementQuantity(item.itemKey)}
-                            aria-label={`Decrease ${item.name} quantity`}
+                            aria-label={withVars(t.decreaseQuantity, { name: item.name })}
                           >
                             -
                           </button>
@@ -108,7 +119,7 @@ export default function ProductPage({ product }) {
                             type="button"
                             className={homeStyles.qtyBtn}
                             onClick={() => incrementQuantity(item.itemKey)}
-                            aria-label={`Increase ${item.name} quantity`}
+                            aria-label={withVars(t.increaseQuantity, { name: item.name })}
                           >
                             +
                           </button>
@@ -119,39 +130,39 @@ export default function ProductPage({ product }) {
                         className={homeStyles.removeItemBtn}
                         onClick={() => removeFromCart(item.itemKey)}
                       >
-                        Remove
+                        {t.remove}
                       </button>
                     </li>
                   ))}
                 </ul>
                 {lastRemovedItem ? (
                   <div className={homeStyles.undoBanner}>
-                    <span>Removed {lastRemovedItem.name}.</span>
+                    <span>{withVars(t.removedItem, { name: lastRemovedItem.name })}</span>
                     <button type="button" onClick={undoRemoveFromCart}>
-                      Undo
+                      {t.undo}
                     </button>
                   </div>
                 ) : null}
                 <div className={homeStyles.cartFooter}>
                   <div className={homeStyles.cartRow}>
-                    <span>Subtotal</span>
+                    <span>{t.subtotal}</span>
                     <strong>{subtotalLabel}</strong>
                   </div>
                   <div className={homeStyles.cartRow}>
-                    <span>Shipping</span>
+                    <span>{t.shipping}</span>
                     <strong>{shippingLabel}</strong>
                   </div>
                   <p className={homeStyles.shippingHint}>{shippingHint}</p>
                   <div className={homeStyles.cartRowTotal}>
-                    <span>Total</span>
+                    <span>{t.total}</span>
                     <strong>{cartTotalLabel}</strong>
                   </div>
                   <button type="button" onClick={startCheckout} disabled={checkoutLoading}>
                     {checkoutState === 'creating'
-                      ? 'Creating session...'
+                      ? t.creatingSessionShort
                       : checkoutState === 'redirecting'
-                        ? 'Redirecting...'
-                        : 'Checkout'}
+                        ? t.redirectingShort
+                        : t.checkout}
                   </button>
                   {checkoutStatusText ? (
                     <span className={homeStyles.checkoutStatus}>{checkoutStatusText}</span>
@@ -172,15 +183,15 @@ export default function ProductPage({ product }) {
             <img
               key={activeImage}
               className={styles.mainImage}
-              src={product.gallery[activeImage]}
-              alt={`${product.name} — photo ${activeImage + 1}`}
+              src={localizedProduct.gallery[activeImage]}
+              alt={withVars(t.photoAlt, { name: localizedProduct.name, index: activeImage + 1 })}
             />
             <div className={styles.thumbnails}>
-              {product.gallery.map((src, i) => (
+              {localizedProduct.gallery.map((src, i) => (
                 <img
                   key={i}
                   src={src}
-                  alt={`${product.name} thumbnail ${i + 1}`}
+                  alt={withVars(t.thumbAlt, { name: localizedProduct.name, index: i + 1 })}
                   className={`${styles.thumb} ${i === activeImage ? styles.thumbActive : ''}`}
                   onClick={() => setActiveImage(i)}
                 />
@@ -191,32 +202,32 @@ export default function ProductPage({ product }) {
           {/* Details */}
           <div className={styles.details}>
             <p className={styles.breadcrumb}>
-              <Link href="/">Home</Link>
+              <Link href="/">{t.home}</Link>
               {' / '}
-              <Link href={product.category === 'Bracelets' ? '/bracelets' : '/necklaces'}>
-                {product.category}
+              <Link href={localizedProduct.category === 'Bracelets' ? '/bracelets' : '/necklaces'}>
+                {translateCategory(localizedProduct.category, t)}
               </Link>
               {' / '}
-              {product.name}
+              {localizedProduct.name}
             </p>
 
-            <h1 className={styles.productName}>{product.name}</h1>
-            <span className={styles.materialBadge}>{product.material}</span>
-            <p className={styles.price}>{product.priceLabel}</p>
-            <p className={styles.description}>{product.description}</p>
+            <h1 className={styles.productName}>{localizedProduct.name}</h1>
+            <span className={styles.materialBadge}>{localizedProduct.material}</span>
+            <p className={styles.price}>{localizedProduct.priceLabel}</p>
+            <p className={styles.description}>{localizedProduct.description}</p>
 
             <button
               className={styles.addBtn}
               type="button"
-              onClick={() => addToCart(product)}
+              onClick={() => addToCart(localizedProduct)}
             >
-              Add to Bag
+              {t.addToBag}
             </button>
 
-            <p className={styles.specsTitle}>Specifications</p>
+            <p className={styles.specsTitle}>{t.specifications}</p>
             <table className={styles.specs}>
               <tbody>
-                {Object.entries(product.specs).map(([key, value]) => (
+                {Object.entries(localizedProduct.specs).map(([key, value]) => (
                   <tr key={key}>
                     <td>{key}</td>
                     <td>{value}</td>
