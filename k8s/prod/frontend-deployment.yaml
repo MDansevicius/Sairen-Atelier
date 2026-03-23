@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: ghcr.io/mdansevicius/sairen-atelier/frontend:main-b760c8e19fac
+        image: ghcr.io/mdansevicius/sairen-atelier/frontend:main-c115dcce513b
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
