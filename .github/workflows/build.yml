@@ -2,39 +2,65 @@ name: Build and Push Images
 on:
   push:
     branches: [main, dev]
+    paths-ignore:
+      - k8s/dev/backend-deployment.yaml
+      - k8s/dev/frontend-deployment.yaml
+      - k8s/prod/backend-deployment.yaml
+      - k8s/prod/frontend-deployment.yaml
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
     - name: Log in to GitHub Container Registry
       run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-    - name: Set image tag by branch
+    - name: Set immutable image tag
       run: |
-        if [ "${GITHUB_REF_NAME}" = "main" ]; then
-          echo "IMAGE_TAG=latest" >> $GITHUB_ENV
-        elif [ "${GITHUB_REF_NAME}" = "dev" ]; then
-          echo "IMAGE_TAG=dev" >> $GITHUB_ENV
-        else
-          echo "IMAGE_TAG=latest" >> $GITHUB_ENV
-        fi
+        SHORT_SHA="${GITHUB_SHA::12}"
+        echo "IMAGE_TAG=${GITHUB_REF_NAME}-${SHORT_SHA}" >> $GITHUB_ENV
+        OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
+        echo "IMAGE_OWNER=${OWNER}" >> $GITHUB_ENV
     - name: Build Backend Image
       run: |
-        OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
-        docker build -t ghcr.io/$OWNER/sairen-atelier/backend:${IMAGE_TAG} backend/
+        docker build -t ghcr.io/${IMAGE_OWNER}/sairen-atelier/backend:${IMAGE_TAG} backend/
     - name: Push Backend Image
       run: |
-        OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
-        docker push ghcr.io/$OWNER/sairen-atelier/backend:${IMAGE_TAG}
+        docker push ghcr.io/${IMAGE_OWNER}/sairen-atelier/backend:${IMAGE_TAG}
     - name: Build Frontend Image
       run: |
-        OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
-        docker build -t ghcr.io/$OWNER/sairen-atelier/frontend:${IMAGE_TAG} frontend/
+        docker build -t ghcr.io/${IMAGE_OWNER}/sairen-atelier/frontend:${IMAGE_TAG} frontend/
     - name: Push Frontend Image
       run: |
-        OWNER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
-        docker push ghcr.io/$OWNER/sairen-atelier/frontend:${IMAGE_TAG}
+        docker push ghcr.io/${IMAGE_OWNER}/sairen-atelier/frontend:${IMAGE_TAG}
+    - name: Update deployment image tags in manifests
+      run: |
+        if [ "${GITHUB_REF_NAME}" = "dev" ]; then
+          BACKEND_FILE="k8s/dev/backend-deployment.yaml"
+          FRONTEND_FILE="k8s/dev/frontend-deployment.yaml"
+        elif [ "${GITHUB_REF_NAME}" = "main" ]; then
+          BACKEND_FILE="k8s/prod/backend-deployment.yaml"
+          FRONTEND_FILE="k8s/prod/frontend-deployment.yaml"
+        else
+          echo "No deployment mapping for branch ${GITHUB_REF_NAME}"
+          exit 1
+        fi
+
+        sed -E -i "s#image: ghcr.io/.*/sairen-atelier/backend:.*#image: ghcr.io/${IMAGE_OWNER}/sairen-atelier/backend:${IMAGE_TAG}#" "${BACKEND_FILE}"
+        sed -E -i "s#image: ghcr.io/.*/sairen-atelier/frontend:.*#image: ghcr.io/${IMAGE_OWNER}/sairen-atelier/frontend:${IMAGE_TAG}#" "${FRONTEND_FILE}"
+
+    - name: Commit and push manifest updates
+      run: |
+        if git diff --quiet; then
+          echo "No manifest changes to commit"
+          exit 0
+        fi
+
+        git config user.name "github-actions[bot]"
+        git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git add k8s/dev/backend-deployment.yaml k8s/dev/frontend-deployment.yaml k8s/prod/backend-deployment.yaml k8s/prod/frontend-deployment.yaml
+        git commit -m "ci: update image tags to ${IMAGE_TAG}"
+        git push
