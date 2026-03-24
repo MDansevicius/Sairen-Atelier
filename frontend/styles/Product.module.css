@@ -28,6 +28,82 @@
   align-items: center;
 }
 
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.langButton {
+  border: 1px solid rgba(181, 112, 127, 0.32);
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  padding: 0.38rem 0.7rem;
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #7b4d58;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.langButton:hover {
+  background: #ffffff;
+}
+
+.langWrap {
+  position: relative;
+}
+
+.chevron,
+.chevronOpen {
+  font-size: 0.7rem;
+  transition: transform 150ms ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.langMenu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  min-width: 100%;
+  border: 1px solid rgba(181, 112, 127, 0.3);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 28px rgba(124, 88, 99, 0.2);
+  overflow: hidden;
+  z-index: 20;
+}
+
+.langOption,
+.langOptionActive {
+  width: 100%;
+  border: none;
+  text-align: left;
+  background: transparent;
+  color: #7b4d58;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.5rem 0.72rem;
+  cursor: pointer;
+}
+
+.langOption:hover {
+  background: rgba(181, 112, 127, 0.12);
+}
+
+.langOptionActive {
+  background: rgba(183, 114, 129, 0.14);
+  color: #b77281;
+}
+
 .backLink {
   display: inline-flex;
   align-items: center;
