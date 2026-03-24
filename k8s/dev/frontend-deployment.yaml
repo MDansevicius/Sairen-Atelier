@@ -21,3 +21,8 @@ spec:
         env:
         - name: NEXT_PUBLIC_APP_ENV
           value: "dev"
+        - name: STRIPE_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: frontend-secrets
+              key: STRIPE_SECRET_KEY
