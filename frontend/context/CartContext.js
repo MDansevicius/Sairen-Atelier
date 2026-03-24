@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/router';
 import { getItemKey } from '../data/products';
 import { getTranslations, withVars } from '../lib/i18n';
@@ -24,6 +24,17 @@ export function CartProvider({ children }) {
   const [checkoutState, setCheckoutState] = useState('idle');
   const [checkoutError, setCheckoutError] = useState('');
   const [lastRemovedItem, setLastRemovedItem] = useState(null);
+
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('sairen_cart');
+      if (saved) setCart(JSON.parse(saved));
+    } catch {}
+  }, []);
+
+  useEffect(() => {
+    try { localStorage.setItem('sairen_cart', JSON.stringify(cart)); } catch {}
+  }, [cart]);
 
   const formatEuro = (valueCents) =>
     new Intl.NumberFormat(locale === 'en' ? 'en-IE' : 'lt-LT', {
@@ -175,6 +186,7 @@ export function CartProvider({ children }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           origin: typeof window !== 'undefined' ? window.location.origin : '',
+          locale: locale || 'lt',
           items: cart.map((item) => ({
             name: item.name,
             priceCents: item.priceCents,

@@ -1,11 +1,16 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { getTranslations } from '../../lib/i18n';
 
 export default function CheckoutSuccess() {
   const { locale } = useRouter();
   const t = getTranslations(locale || 'lt');
+
+  useEffect(() => {
+    try { localStorage.removeItem('sairen_cart'); } catch {}
+  }, []);
 
   return (
     <>
