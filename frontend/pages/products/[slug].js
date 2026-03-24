@@ -1,13 +1,41 @@
 import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from '../../styles/Product.module.css';
 import homeStyles from '../../styles/Home.module.css';
 import { allProducts } from '../../data/products';
 import { useCart } from '../../context/CartContext';
 import { getTranslations, translateCategory, withVars } from '../../lib/i18n';
 import { localizeProduct } from '../../lib/productLocalization';
+
+function LangButton() {
+  const { locale, pathname, query, push } = useRouter();
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const close = (e) => { if (!ref.current?.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, []);
+
+  const pick = (loc) => { setOpen(false); if (loc !== locale) push({ pathname, query }, undefined, { locale: loc }); };
+
+  return (
+    <div ref={ref} className={styles.langWrap}>
+      <button type="button" className={styles.langButton} onClick={() => setOpen(!open)}>
+        {locale === 'lt' ? 'LT' : 'EN'} <span className={open ? styles.chevronOpen : styles.chevron}>▾</span>
+      </button>
+      {open && (
+        <div className={styles.langMenu}>
+          <button type="button" className={locale === 'lt' ? styles.langOptionActive : styles.langOption} onClick={() => pick('lt')}>LT</button>
+          <button type="button" className={locale === 'en' ? styles.langOptionActive : styles.langOption} onClick={() => pick('en')}>EN</button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export async function getStaticPaths({ locales }) {
   return {
@@ -72,19 +100,22 @@ export default function ProductPage({ product }) {
           <Link className={styles.brandMark} href="/" aria-label={t.brandHomeAria}>
             SAIREN
           </Link>
-          <button
-            className={styles.cartButton}
-            type="button"
-            onClick={() => setCartOpen(true)}
-            aria-label={t.openShoppingBag}
-          >
+          <div className={styles.headerRight}>
+            <LangButton />
+            <button
+              className={styles.cartButton}
+              type="button"
+              onClick={() => setCartOpen(true)}
+              aria-label={t.openShoppingBag}
+            >
             <span className={styles.cartIcon} aria-hidden="true">
               <svg viewBox="0 0 24 24">
                 <path d="M7 8V7a5 5 0 0110 0v1h2a1 1 0 011 1l-1 10a2 2 0 01-2 2H7a2 2 0 01-2-2L4 9a1 1 0 011-1h2zm2 0h6V7a3 3 0 00-6 0v1zm-2.98 2l.87 8.72a.5.5 0 00.5.48h9.22a.5.5 0 00.5-.48L18 10H6.02z" />
               </svg>
             </span>
             <span className={styles.cartCount}>{cartCount}</span>
-          </button>
+            </button>
+          </div>
         </header>
 
         {/* ── Cart drawer ── */}

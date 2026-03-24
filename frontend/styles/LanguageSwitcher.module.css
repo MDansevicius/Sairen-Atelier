@@ -1,45 +1,87 @@
 .switcher {
   position: fixed;
-  top: 0.95rem;
-  left: 1rem;
-  z-index: 40;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-  border: 1px solid rgba(181, 112, 127, 0.32);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.84);
-  backdrop-filter: blur(4px);
-  padding: 0.36rem 0.62rem;
-  box-shadow: 0 10px 20px rgba(124, 88, 99, 0.14);
+  top: 0.5rem;
+  right: 5.5rem;
+  z-index: 9999;
+  min-width: 4.25rem;
 }
 
-.link,
-.active {
+.trigger {
+  width: 100%;
   border: none;
-  background: transparent;
-  padding: 0;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(181, 112, 127, 0.32);
+  border-radius: 999px;
+  padding: 0.38rem 0.72rem;
   font-family: inherit;
-  text-decoration: none;
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   color: #7b4d58;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  backdrop-filter: blur(4px);
+  box-shadow: 0 10px 20px rgba(124, 88, 99, 0.14);
 }
 
-.active {
+.trigger:hover {
+  background: #ffffff;
+}
+
+.chevron,
+.chevronOpen {
+  transition: transform 150ms ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 100%;
+  margin-top: 0.45rem;
+  border: 1px solid rgba(181, 112, 127, 0.3);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 12px 28px rgba(124, 88, 99, 0.2);
+  overflow: hidden;
+}
+
+.option,
+.optionActive {
+  width: 100%;
+  border: none;
+  text-align: left;
+  background: transparent;
+  color: #7b4d58;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 0.5rem 0.72rem;
+  cursor: pointer;
+}
+
+.option:hover {
+  background: rgba(181, 112, 127, 0.12);
+}
+
+.optionActive {
+  background: rgba(183, 114, 129, 0.14);
   color: #b77281;
-}
-
-.divider {
-  color: rgba(123, 77, 88, 0.45);
 }
 
 @media (max-width: 660px) {
   .switcher {
-    top: 0.65rem;
-    left: 0.65rem;
-    padding: 0.3rem 0.55rem;
+    min-width: 4.05rem;
+  }
+
+  .trigger {
+    padding: 0.34rem 0.62rem;
   }
 }
