@@ -11,6 +11,13 @@ spec:
     - host: dev.sairen.lt
       http:
         paths:
+          - path: /api/checkout
+            pathType: Prefix
+            backend:
+              service:
+                name: eshop-frontend
+                port:
+                  number: 3000
           - path: /api
             pathType: Prefix
             backend:
